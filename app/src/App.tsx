@@ -117,8 +117,8 @@ export default function App() {
     setExportLoading(true);
     try {
       const ops = await getOperationByHash(hash);
-      if (!verifyPaymentInOps(ops, HUMAN_WALLET, EXPORT_PRICE_MUTEZ)) {
-        setExportError('No payment found to the human wallet for 0.5 XTZ or more. Check the operation hash.');
+      if (!verifyPaymentInOps(ops, NIMROD_WALLET, EXPORT_PRICE_MUTEZ)) {
+        setExportError('No payment found to Nimrod\'s wallet for 0.5 XTZ or more. Check the operation hash.');
         return;
       }
       const txsForExport = await getRecentTransactions(address.trim(), 100);
@@ -245,7 +245,7 @@ export default function App() {
         <div className="summary">
           <h2 style={{ fontSize: '0.9375rem' }}>Export transactions (paid)</h2>
           <p className="muted" style={{ fontSize: '0.8125rem', marginTop: '-0.25rem' }}>
-            Send {(EXPORT_PRICE_MUTEZ / 1_000_000).toFixed(1)} XTZ or more to the human wallet (below). Paste the operation hash from your payment. We verify on-chain and unlock a CSV of up to 100 transactions for this address.
+            Send {(EXPORT_PRICE_MUTEZ / 1_000_000).toFixed(1)} XTZ or more to Nimrod&apos;s wallet (below). Paste the operation hash from your payment. We verify on-chain and unlock a CSV of up to 100 transactions. Nimrod keeps a register and pays the human once per month in a lump sum.
           </p>
           {!exportVerified ? (
             <>

@@ -42,3 +42,13 @@ SIGNER_URL=http://localhost:3333 node scripts/transfer.js --to=tz1cgZ6PWKoER3gvW
 ```
 
 Optional: `SIGNER_AUTH_TOKEN=<token>` for bearer auth.
+
+## Monthly lump payout (repo root)
+
+Nimrod receives export payments to its wallet and pays the human once per month in a lump sum:
+
+```bash
+SIGNER_URL=http://localhost:3333 node scripts/monthly-payout.js
+```
+
+Sends (balance − 0.5 XTZ reserve) to the human wallet. Run monthly (or when you want to turn over accumulated XTZ).

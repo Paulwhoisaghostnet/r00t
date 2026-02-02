@@ -7,5 +7,5 @@ export const NIMROD_WALLET = 'tz1MrLSKWNZjY7ugAUUstDaAASuZVNXEuxQ7';
 /** Human's wallet – pay-the-human (XTZ turned over to human as intermediary). */
 export const HUMAN_WALLET = 'tz1cgZ6PWKoER3gvW3jGKPHgBkRnpj8XzLm2';
 
-/** Min XTZ (mutez) for paid export; payment must go to HUMAN_WALLET. */
+/** Min XTZ (mutez) for paid export; payment must go to NIMROD_WALLET. Nimrod keeps a register; pays human in 1 monthly lump. */
 export const EXPORT_PRICE_MUTEZ = 500_000;
