@@ -3,12 +3,14 @@ import {
   getAccount,
   getRecentTransactions,
   getRecentTokenTransfers,
+  getOperationByHash,
+  verifyPaymentInOps,
   isValidTezosAddress,
   type AccountInfo,
   type TxRow,
   type TokenTransferRow,
 } from './lib/tzkt';
-import { NIMROD_WALLET, HUMAN_WALLET } from './config';
+import { NIMROD_WALLET, HUMAN_WALLET, EXPORT_PRICE_MUTEZ } from './config';
 
 function formatXtz(mutez: number): string {
   return (mutez / 1_000_000).toFixed(4);
@@ -43,6 +45,11 @@ export default function App() {
   const [txs, setTxs] = useState<TxRow[]>([]);
   const [transfers, setTransfers] = useState<TokenTransferRow[]>([]);
   const [copyFeedback, setCopyFeedback] = useState<string | null>(null);
+  const [exportOpHash, setExportOpHash] = useState('');
+  const [exportVerified, setExportVerified] = useState(false);
+  const [exportTxs, setExportTxs] = useState<TxRow[]>([]);
+  const [exportError, setExportError] = useState<string | null>(null);
+  const [exportLoading, setExportLoading] = useState(false);
 
   async function fetchForAddress(addr: string) {
     const trimmed = addr.trim();
@@ -51,6 +58,10 @@ export default function App() {
     setAccount(null);
     setTxs([]);
     setTransfers([]);
+    setExportVerified(false);
+    setExportTxs([]);
+    setExportOpHash('');
+    setExportError(null);
     setLoading(true);
     try {
       const [acc, txList, transferList] = await Promise.all([
@@ -97,6 +108,48 @@ export default function App() {
     } catch {
       setCopyFeedback(null);
     }
+  }
+
+  async function handleVerifyExport() {
+    const hash = exportOpHash.trim();
+    if (!hash || !address.trim()) return;
+    setExportError(null);
+    setExportLoading(true);
+    try {
+      const ops = await getOperationByHash(hash);
+      if (!verifyPaymentInOps(ops, HUMAN_WALLET, EXPORT_PRICE_MUTEZ)) {
+        setExportError('No payment found to the human wallet for 0.5 XTZ or more. Check the operation hash.');
+        return;
+      }
+      const txsForExport = await getRecentTransactions(address.trim(), 100);
+      setExportTxs(txsForExport);
+      setExportVerified(true);
+    } catch (err) {
+      setExportError(err instanceof Error ? err.message : 'Verification failed.');
+    } finally {
+      setExportLoading(false);
+    }
+  }
+
+  function downloadExportCsv() {
+    if (exportTxs.length === 0) return;
+    const header = 'timestamp,hash,sender,target,amount_xtz,fee_xtz\n';
+    const rows = exportTxs.map((tx) => {
+      const ts = formatTime(tx.timestamp);
+      const amt = tx.amount != null ? formatXtz(tx.amount) : '';
+      const fee = tx.fee != null ? formatXtz(tx.fee) : '';
+      const sender = tx.sender?.address ?? '';
+      const target = tx.target?.address ?? '';
+      return `${ts},${tx.hash},${sender},${target},${amt},${fee}`;
+    });
+    const csv = header + rows.join('\n');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `tezos-txs-${address.slice(0, 8)}-${exportTxs.length}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
   }
 
   return (
@@ -185,6 +238,38 @@ export default function App() {
               );
             })}
           </ul>
+        </div>
+      )}
+
+      {account && (
+        <div className="summary">
+          <h2 style={{ fontSize: '0.9375rem' }}>Export transactions (paid)</h2>
+          <p className="muted" style={{ fontSize: '0.8125rem', marginTop: '-0.25rem' }}>
+            Send {(EXPORT_PRICE_MUTEZ / 1_000_000).toFixed(1)} XTZ or more to the human wallet (below). Paste the operation hash from your payment. We verify on-chain and unlock a CSV of up to 100 transactions for this address.
+          </p>
+          {!exportVerified ? (
+            <>
+              <p style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', alignItems: 'center', marginTop: '0.5rem' }}>
+                <input
+                  type="text"
+                  placeholder="Operation hash (e.g. oo…)"
+                  value={exportOpHash}
+                  onChange={(e) => { setExportOpHash(e.target.value); setExportError(null); }}
+                  style={{ flex: '1 1 200px', fontFamily: 'monospace', fontSize: '0.8125rem' }}
+                />
+                <button type="button" onClick={handleVerifyExport} disabled={exportLoading}>
+                  {exportLoading ? 'Checking…' : 'Verify and unlock'}
+                </button>
+              </p>
+              {exportError && <p className="error" style={{ marginTop: '0.5rem' }}>{exportError}</p>}
+            </>
+          ) : (
+            <p style={{ marginTop: '0.5rem' }}>
+              <button type="button" onClick={downloadExportCsv}>
+                Download CSV ({exportTxs.length} transactions)
+              </button>
+            </p>
+          )}
         </div>
       )}
 

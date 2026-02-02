@@ -26,6 +26,26 @@ export function isValidTezosAddress(address: string): boolean {
   return /^(tz[123]|KT1)[a-zA-Z0-9]{33}$/.test(address.trim());
 }
 
+/** Operation group by hash (list: reveal + transaction, etc.). */
+interface TzktOpItem {
+  type: string;
+  target?: { address: string };
+  amount?: number;
+}
+
+export async function getOperationByHash(hash: string): Promise<TzktOpItem[]> {
+  const data = await fetchJson<TzktOpItem[]>(`${TZKT_BASE}/operations/${encodeURIComponent(hash)}`);
+  return Array.isArray(data) ? data : [];
+}
+
+/** True if the op group contains a transaction to expectedTarget with amount >= minMutez. */
+export function verifyPaymentInOps(ops: TzktOpItem[], expectedTarget: string, minMutez: number): boolean {
+  const tx = ops.find((o) => o.type === 'transaction');
+  if (!tx?.target?.address || tx.amount == null) return false;
+  if (tx.target.address !== expectedTarget.trim()) return false;
+  return tx.amount >= minMutez;
+}
+
 export async function getAccount(address: string): Promise<AccountInfo | null> {
   try {
     const data = await fetchJson<{
