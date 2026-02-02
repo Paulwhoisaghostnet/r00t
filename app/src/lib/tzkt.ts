@@ -75,9 +75,15 @@ export async function getRecentTransactions(
     `${TZKT_BASE}/operations/transactions?${params}`
   );
   if (!Array.isArray(data)) return [];
+  if (data.length === 0) return [];
+
+  const levels = [...new Set(data.map((row) => row.level))];
+  const levelToTimestamp = await getBlockTimestamps(levels);
+
   return data.map((row) => ({
     ...row,
     fee: row.fee ?? row.bakerFee,
+    timestamp: levelToTimestamp[row.level] ?? row.timestamp,
   }));
 }
 
@@ -110,6 +116,24 @@ interface TzktTokenTransferRaw {
   };
 }
 
+async function getBlockTimestamps(levels: number[]): Promise<Record<number, string>> {
+  if (levels.length === 0) return {};
+  const levelParams = new URLSearchParams({
+    'level.in': levels.slice(0, 50).join(','),
+    limit: String(levels.length),
+  });
+  const blocks = await fetchJson<{ level: number; timestamp: string }[]>(
+    `${TZKT_BASE}/blocks?${levelParams}`
+  );
+  const out: Record<number, string> = {};
+  if (Array.isArray(blocks)) {
+    for (const b of blocks) {
+      if (b.level != null && b.timestamp) out[b.level] = b.timestamp;
+    }
+  }
+  return out;
+}
+
 export async function getRecentTokenTransfers(
   address: string,
   limit = 15
@@ -123,10 +147,12 @@ export async function getRecentTokenTransfers(
     `${TZKT_BASE}/tokens/transfers?${params}`
   );
   if (!Array.isArray(data)) return [];
+  const levels = [...new Set(data.map((row) => row.level))];
+  const levelToTimestamp = await getBlockTimestamps(levels);
   return data.map((row) => ({
     id: row.id,
     level: row.level,
-    timestamp: row.timestamp,
+    timestamp: levelToTimestamp[row.level] ?? row.timestamp,
     from: row.from,
     to: row.to,
     amount: row.amount,

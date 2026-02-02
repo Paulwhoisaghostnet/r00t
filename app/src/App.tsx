@@ -24,12 +24,14 @@ function shortAddr(addr: string): string {
   return `${addr.slice(0, 8)}…${addr.slice(-6)}`;
 }
 
-function formatTime(iso: string): string {
+function formatTime(iso: string | undefined): string {
+  if (iso == null || iso === '') return '—';
   try {
     const d = new Date(iso);
+    if (Number.isNaN(d.getTime())) return '—';
     return d.toLocaleString(undefined, { dateStyle: 'short', timeStyle: 'short' });
   } catch {
-    return iso;
+    return '—';
   }
 }
 
