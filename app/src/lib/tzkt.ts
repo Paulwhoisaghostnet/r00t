@@ -58,18 +58,27 @@ export interface TxRow {
   status?: string;
 }
 
+interface TzktTransactionRaw extends TxRow {
+  bakerFee?: number;
+}
+
 export async function getRecentTransactions(
   address: string,
   limit = 20
 ): Promise<TxRow[]> {
   const params = new URLSearchParams({
+    account: address,
     limit: String(limit),
-    sort: 'desc',
+    'sort.desc': 'id',
   });
-  const data = await fetchJson<TxRow[]>(
-    `${TZKT_BASE}/accounts/${encodeURIComponent(address)}/operations/transactions?${params}`
+  const data = await fetchJson<TzktTransactionRaw[]>(
+    `${TZKT_BASE}/operations/transactions?${params}`
   );
-  return Array.isArray(data) ? data : [];
+  if (!Array.isArray(data)) return [];
+  return data.map((row) => ({
+    ...row,
+    fee: row.fee ?? row.bakerFee,
+  }));
 }
 
 export interface TokenTransferRow {
@@ -86,16 +95,50 @@ export interface TokenTransferRow {
   };
 }
 
+interface TzktTokenTransferRaw {
+  id: number;
+  level: number;
+  timestamp: string;
+  from?: { address: string; alias?: string };
+  to?: { address: string; alias?: string };
+  amount?: string;
+  token?: {
+    id?: number;
+    contract?: { address: string; alias?: string };
+    tokenId?: string;
+    standard?: string;
+  };
+}
+
 export async function getRecentTokenTransfers(
   address: string,
   limit = 15
 ): Promise<TokenTransferRow[]> {
   const params = new URLSearchParams({
+    account: address,
     limit: String(limit),
-    sort: 'desc',
+    'sort.desc': 'id',
   });
-  const data = await fetchJson<TokenTransferRow[]>(
-    `${TZKT_BASE}/accounts/${encodeURIComponent(address)}/operations/token_transfers?${params}`
+  const data = await fetchJson<TzktTokenTransferRaw[]>(
+    `${TZKT_BASE}/tokens/transfers?${params}`
   );
-  return Array.isArray(data) ? data : [];
+  if (!Array.isArray(data)) return [];
+  return data.map((row) => ({
+    id: row.id,
+    level: row.level,
+    timestamp: row.timestamp,
+    from: row.from,
+    to: row.to,
+    amount: row.amount,
+    token: row.token
+      ? {
+          contract: row.token.contract,
+          tokenId: row.token.tokenId,
+          metadata: {
+            symbol: row.token.contract?.alias ?? row.token.standard,
+            name: row.token.contract?.alias ?? row.token.standard,
+          },
+        }
+      : undefined,
+  }));
 }

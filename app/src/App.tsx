@@ -40,6 +40,7 @@ export default function App() {
   const [account, setAccount] = useState<AccountInfo | null>(null);
   const [txs, setTxs] = useState<TxRow[]>([]);
   const [transfers, setTransfers] = useState<TokenTransferRow[]>([]);
+  const [copyFeedback, setCopyFeedback] = useState<string | null>(null);
 
   async function fetchForAddress(addr: string) {
     const trimmed = addr.trim();
@@ -84,6 +85,16 @@ export default function App() {
   function handleViewNimrodWallet() {
     setAddress(NIMROD_WALLET);
     fetchForAddress(NIMROD_WALLET);
+  }
+
+  async function copyAddress(addr: string, label: string) {
+    try {
+      await navigator.clipboard.writeText(addr);
+      setCopyFeedback(label);
+      setTimeout(() => setCopyFeedback(null), 2000);
+    } catch {
+      setCopyFeedback(null);
+    }
   }
 
   return (
@@ -174,12 +185,18 @@ export default function App() {
         <p>
           Nimrod&apos;s wallet (r00t experiment). Once the signer service is running, the agent can sign from this address; otherwise the human holds the keys. Payments to Nimrod&apos;s wallet fund the experiment; the human receives as intermediary.
         </p>
-        <p style={{ wordBreak: 'break-all', fontFamily: 'monospace', fontSize: '0.8125rem' }}>
-          {NIMROD_WALLET}
+        <p style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '0.5rem' }}>
+          <code style={{ wordBreak: 'break-all', fontSize: '0.8125rem', flex: '1 1 200px' }}>{NIMROD_WALLET}</code>
+          <button type="button" onClick={() => copyAddress(NIMROD_WALLET, 'Nimrod')} style={{ flexShrink: 0 }}>
+            {copyFeedback === 'Nimrod' ? 'Copied!' : 'Copy'}
+          </button>
         </p>
         <p className="muted" style={{ marginTop: '0.75rem' }}>Pay the human (intermediary):</p>
-        <p style={{ wordBreak: 'break-all', fontFamily: 'monospace', fontSize: '0.8125rem' }}>
-          {HUMAN_WALLET}
+        <p style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '0.5rem' }}>
+          <code style={{ wordBreak: 'break-all', fontSize: '0.8125rem', flex: '1 1 200px' }}>{HUMAN_WALLET}</code>
+          <button type="button" onClick={() => copyAddress(HUMAN_WALLET, 'Human')} style={{ flexShrink: 0 }}>
+            {copyFeedback === 'Human' ? 'Copied!' : 'Copy'}
+          </button>
         </p>
       </div>
     </>
