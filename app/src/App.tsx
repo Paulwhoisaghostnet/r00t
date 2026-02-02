@@ -145,13 +145,16 @@ export default function App() {
       {txs.length > 0 && (
         <div className="summary">
           <h2>Recent XTZ transactions</h2>
+          <p className="muted" style={{ fontSize: '0.8125rem', marginTop: '-0.5rem', marginBottom: '0.5rem' }}>
+            Times are block time (when the tx was included on-chain), not when this page loaded.
+          </p>
           <ul className="ops-list">
             {txs.map((tx) => {
               const amount = tx.amount != null ? formatXtz(tx.amount) : '—';
               const fee = tx.fee != null ? formatXtz(tx.fee) : '';
               return (
                 <li key={tx.id}>
-                  <span className="muted">{formatTime(tx.timestamp)}</span>
+                  <span className="muted" title={tx.timestamp}>{formatTime(tx.timestamp)}</span>
                   <span>
                     {amount} XTZ {fee ? `(fee ${fee})` : ''} · {shortHash(tx.hash)}
                   </span>
@@ -165,6 +168,9 @@ export default function App() {
       {transfers.length > 0 && (
         <div className="summary">
           <h2>Recent token transfers</h2>
+          <p className="muted" style={{ fontSize: '0.8125rem', marginTop: '-0.5rem', marginBottom: '0.5rem' }}>
+            Times are block time (on-chain), not when this page loaded.
+          </p>
           <ul className="ops-list">
             {transfers.map((tr) => {
               const token = tr.token?.metadata?.symbol || tr.token?.metadata?.name || 'token';
