@@ -67,7 +67,7 @@ export async function getRecentTransactions(
   limit = 20
 ): Promise<TxRow[]> {
   const params = new URLSearchParams({
-    account: address,
+    'anyof.sender.target': address,
     limit: String(limit),
     'sort.desc': 'id',
   });
@@ -139,7 +139,7 @@ export async function getRecentTokenTransfers(
   limit = 15
 ): Promise<TokenTransferRow[]> {
   const params = new URLSearchParams({
-    account: address,
+    'anyof.from.to': address,
     limit: String(limit),
     'sort.desc': 'id',
   });
