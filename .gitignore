@@ -1,0 +1,17 @@
+# OS
+.DS_Store
+
+# Nimrod persistent docs (local only, never committed)
+nimrod/
+
+# Reference projects (you move them in; never committed)
+reference/
+
+# App build
+app/node_modules/
+app/dist/
+
+# Signer env and address file (never committed)
+signer/.env
+signer/NIMROD_ADDRESS.txt
+signer/node_modules/

@@ -1,0 +1,11 @@
+# Netlify build for r00t wallet summary app
+# Connect this repo in Netlify and set build command to run from app/
+[build]
+  base = "app"
+  command = "npm ci && npm run build"
+  publish = "app/dist"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

@@ -1,0 +1,17 @@
+{
+  "name": "r00t-signer",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js",
+    "gen-keypair": "node scripts/gen-keypair.js"
+  },
+  "dependencies": {
+    "@taquito/signer": "^20.0.0",
+    "@taquito/taquito": "^20.0.0",
+    "bip39": "^3.1.0",
+    "dotenv": "^17.2.3",
+    "express": "^4.21.0"
+  }
+}
