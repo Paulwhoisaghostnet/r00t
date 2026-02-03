@@ -36,7 +36,7 @@ Run study on a schedule or on demand. Prefer small batches (e.g. 100–500 recor
 
 ## Conventions
 
-- **Networks:** Use subdirs `mainnet` and `ghostnet` under `.study/tzkt/`. Base URLs: `https://api.tzkt.io/v1`, `https://ghostnet.tzkt.io/v1`.
+- **Networks:** Use subdirs `mainnet` and `ghostnet` under `.study/tzkt/`. Base URLs: `https://api.tzkt.io/v1`, `https://api.ghostnet.tzkt.io/v1`.
 - **Format:** NDJSON for append-friendly storage. Use `id` or `level` for ordering and dedup.
 - **Meta:** `.study/tzkt/meta.json` shape: `{ "mainnet": { "lastLevel": number }, "ghostnet": { "lastLevel": number } }`.
 

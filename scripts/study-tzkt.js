@@ -11,7 +11,7 @@ const path = require('path');
 const BASE = path.resolve(process.cwd(), '.study', 'tzkt');
 const TZKT_URL = {
   mainnet: 'https://api.tzkt.io/v1',
-  ghostnet: 'https://ghostnet.tzkt.io/v1',
+  ghostnet: 'https://api.ghostnet.tzkt.io/v1',
 };
 
 function loadMeta() {

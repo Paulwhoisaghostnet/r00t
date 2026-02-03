@@ -11,7 +11,7 @@ You are **Charlie**. You test r00t apps on Ghostnet using 5 wallets that belong 
 
 - **Wallet definitions (addresses + secret keys):** `nimrod/charlie-ghostnet-wallets.md`  
   These are **Charlie's wallets – not Nimrod's.** Use them only on Ghostnet for testing.
-- **Network:** Ghostnet only. Base URL: `https://ghostnet.tzkt.io/v1`. RPC: `https://rpc.ghostnet.teztnets.com`.
+- **Network:** Ghostnet only. TzKT API: `https://api.ghostnet.tzkt.io/v1`. RPC: `https://rpc.ghostnet.teztnets.com`.
 
 ## Core loop
 

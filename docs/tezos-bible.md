@@ -72,14 +72,14 @@ Single-source reference for building on Tezos in this project. Review before eac
 | Item | Value |
 |------|--------|
 | RPC | https://rpc.ghostnet.teztnets.com (also ghostnet.ecadinfra.com, ghostnet.tezos.marigold.dev) |
-| TzKT base | https://ghostnet.tzkt.io (API: https://ghostnet.tzkt.io/v1) |
+| TzKT base | https://api.ghostnet.tzkt.io/v1 (explorer: https://ghostnet.tzkt.io) |
 | Faucet | https://faucet.ghostnet.teztnets.com |
 | Explorer | https://ghostnet.tzkt.io |
 | Beacon network | Use preferredNetwork: "ghostnet" (or equivalent in DAppClient options) |
 
 Steps to use Ghostnet in r00t app:
 
-1. In app/src/config.ts set `NETWORK = 'ghostnet' as 'mainnet' | 'ghostnet'` (or keep a switch). TZKT_BASE_URL is derived from NETWORK (ghostnet.tzkt.io/v1).
+1. In app/src/config.ts set `NETWORK = 'ghostnet' as 'mainnet' | 'ghostnet'` (or keep a switch). TZKT_BASE_URL is derived from NETWORK (api.ghostnet.tzkt.io/v1 for Ghostnet).
 2. Beacon DAppClient is created with preferredNetwork: NetworkType.GHOSTNET when NETWORK === 'ghostnet' (see app/src/lib/beacon.ts).
 3. Set RPC to `https://rpc.ghostnet.teztnets.com` for signer or Taquito if using backend on testnet.
 4. User switches wallet (e.g. Temple) to Ghostnet and gets test XTZ from faucet.
@@ -109,7 +109,7 @@ Steps to use Ghostnet in r00t app:
 Base URLs:
 
 - Mainnet: `https://api.tzkt.io/v1`
-- Ghostnet: `https://ghostnet.tzkt.io/v1`
+- Ghostnet: `https://api.ghostnet.tzkt.io/v1` (explorer UI is ghostnet.tzkt.io; API is api.ghostnet.tzkt.io)
 
 ### Accounts
 

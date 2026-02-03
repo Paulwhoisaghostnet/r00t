@@ -1,12 +1,12 @@
 /** Dev-only: when '1', app acts as if NIMROD_WALLET is connected (no Beacon). For Ghostnet self-test. */
 export const NIMROD_TEST_MODE = import.meta.env.VITE_NIMROD_TEST === '1';
 
-/** Current Tezos network. Change to 'ghostnet' for testnet (no mainnet XTZ at risk). */
-export const NETWORK = 'mainnet' as 'mainnet' | 'ghostnet';
+/** Current Tezos network. Set VITE_NETWORK=ghostnet at build time for testnet. */
+export const NETWORK = (import.meta.env.VITE_NETWORK === 'ghostnet' ? 'ghostnet' : 'mainnet') as 'mainnet' | 'ghostnet';
 
 /** TzKT API base URL for the current network. */
 export const TZKT_BASE_URL =
-  NETWORK === 'ghostnet' ? 'https://ghostnet.tzkt.io/v1' : 'https://api.tzkt.io/v1';
+  NETWORK === 'ghostnet' ? 'https://api.ghostnet.tzkt.io/v1' : 'https://api.tzkt.io/v1';
 
 /**
  * Nimrod's Tezos wallet (r00t experiment).

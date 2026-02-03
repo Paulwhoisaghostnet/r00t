@@ -29,7 +29,7 @@ Choose by team skills and goals: LIGO for type-safety and clarity, SmartPy for s
 ### 1. dApp (frontend + optional backend)
 
 - **Wallet:** Beacon SDK (`@airgap/beacon-sdk`): `requestPermissions()`, `requestSignPayload()` for auth. Optionally Taquito + `@taquito/beacon-wallet` for a unified wallet API.
-- **Data:** TzKT API (accounts, operations, tokens/transfers, blocks). Base URLs: mainnet `api.tzkt.io/v1`, Ghostnet `ghostnet.tzkt.io/v1`.
+- **Data:** TzKT API (accounts, operations, tokens/transfers, blocks). Base URLs: mainnet `api.tzkt.io/v1`, Ghostnet `api.ghostnet.tzkt.io/v1`.
 - **Backend signer (if needed):** Taquito with `@taquito/signer` (InMemorySigner), RPC URL for the target network. Never expose secret keys to the frontend.
 
 ### 2. Smart contracts
@@ -46,7 +46,7 @@ Choose by team skills and goals: LIGO for type-safety and clarity, SmartPy for s
 
 ### 4. Testnets and deployment
 
-- **Ghostnet** – Primary testnet. RPC: rpc.ghostnet.teztnets.com; TzKT: ghostnet.tzkt.io; Beacon: `preferredNetwork: "ghostnet"`.
+- **Ghostnet** – Primary testnet. RPC: rpc.ghostnet.teztnets.com; TzKT API: api.ghostnet.tzkt.io/v1; Beacon: `preferredNetwork: "ghostnet"`.
 - **Shadownet** – Alternative testnet (teztnets.com).
 - **Mainnet** – After tests pass; same stack, switch RPC and TzKT base and Beacon network.
 
