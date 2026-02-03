@@ -15,3 +15,6 @@ app/dist/
 signer/.env
 signer/NIMROD_ADDRESS.txt
 signer/node_modules/
+
+# TzKT study database (local only; export subsets to project folders when needed)
+.study/
